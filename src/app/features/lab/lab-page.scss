@@ -1,0 +1,39 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+h2 {
+  font-size: 15px;
+  margin: 0 0 6px;
+}
+
+.exp p {
+  font-size: 13px;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.small {
+  font-size: 12px;
+}
+
+.log {
+  margin: 0;
+  max-height: 320px;
+  overflow: auto;
+  font-size: 12px;
+  white-space: pre-wrap;
+  color: var(--muted);
+}
+
+.compact td {
+  padding: 4px 8px;
+  font-size: 12px;
+}

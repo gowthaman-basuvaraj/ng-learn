@@ -1,0 +1,50 @@
+<form class="card ticket" [formGroup]="form" (ngSubmit)="submit()">
+  <strong>Order ticket</strong>
+
+  <div class="seg2" role="radiogroup" aria-label="Side">
+    <label [class.buy]="form.controls.side.value === 'BUY'"><input type="radio" formControlName="side" value="BUY" /> Buy</label>
+    <label [class.sell]="form.controls.side.value === 'SELL'"><input type="radio" formControlName="side" value="SELL" /> Sell</label>
+  </div>
+
+  <label class="field">
+    Type
+    <select formControlName="type">
+      <option value="MARKET">Market</option>
+      <option value="LIMIT">Limit</option>
+    </select>
+  </label>
+
+  <label class="field">
+    Quantity
+    <input type="number" formControlName="qty" min="1" step="1" />
+    @if (errorFor('qty'); as e) { <span class="error">{{ e }}</span> }
+  </label>
+
+  @if (form.controls.type.value === 'LIMIT') {
+    <label class="field">
+      Limit price
+      <input type="number" formControlName="limitPrice" step="0.01" />
+      @if (errorFor('limitPrice'); as e) { <span class="error">{{ e }}</span> }
+    </label>
+  }
+
+  @if (form.errors?.['exceedsPosition']; as x) {
+    <p class="error">You only hold {{ x.held }} shares.</p>
+  }
+  @if (formError(); as e) {
+    <p class="error" role="alert">{{ e }}</p>
+  }
+
+  <div class="estimate">
+    <span class="muted">Estimated</span>
+    <span class="mono">{{ estimate() === null ? '-' : (estimate() | currency) }}</span>
+  </div>
+
+  <button class="btn" type="submit"
+    [class.btn--buy]="form.controls.side.value === 'BUY'"
+    [class.btn--sell]="form.controls.side.value === 'SELL'"
+    [disabled]="status() === 'INVALID' || orders.submitting()">
+    {{ orders.submitting() ? 'Sending…' : form.controls.side.value + ' ' + store.symbol() }}
+  </button>
+  <p class="muted tiny">Market orders fill over SSE in about 1.5s (10% are randomly rejected). Limit orders work until the price crosses.</p>
+</form>

@@ -1,0 +1,64 @@
+<section class="page-head">
+  <div>
+    <h1>Markets</h1>
+    <p class="muted">Prices stream over one shared WebSocket. Only visible rows are subscribed.</p>
+  </div>
+  <div class="filters">
+    <input type="search" placeholder="Search symbol or name…" [value]="search()" (input)="search.set($any($event.target).value)"
+      (keydown)="onKeydown($event)" aria-label="Search instruments" />
+    <select [value]="sector()" (change)="sector.set($any($event.target).value)" aria-label="Sector">
+      <option value="all">All sectors</option>
+      @for (s of store.sectors(); track s) {
+        <option [value]="s">{{ s }}</option>
+      }
+    </select>
+  </div>
+</section>
+
+@switch (store.instrumentsStatus()) {
+  @case ('loading') {
+    <div class="card skeleton" aria-busy="true">Loading instruments…</div>
+  }
+  @case ('error') {
+    <div class="card">
+      Couldn't load instruments. <button class="btn" type="button" (click)="store.loadInstruments()">Retry</button>
+    </div>
+  }
+  @default {
+    <div class="card table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th><button type="button" class="th-btn" (click)="toggleSort('symbol')">Symbol</button></th>
+            <th class="hide-sm">Name</th>
+            <th class="hide-sm">Sector</th>
+            <th class="num"><button type="button" class="th-btn" (click)="toggleSort('price')">Last</button></th>
+            <th class="num"><button type="button" class="th-btn" (click)="toggleSort('changePct')">Change</button></th>
+            <th class="hide-sm">Trend</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of rows(); track row.symbol; let i = $index) {
+            <tr [class.active]="i === activeIndex()" [routerLink]="['/markets', row.symbol]" class="clickable">
+              <td><strong>{{ row.symbol }}</strong></td>
+              <td class="hide-sm">{{ row.name }}</td>
+              <td class="hide-sm muted">{{ row.sector }}</td>
+              @if (row.quote; as q) {
+                <td class="num mono" [appPriceFlash]="q.price">{{ q.price | number: '1.2-2' }}</td>
+                <td class="num mono" [class.up]="q.change > 0" [class.down]="q.change < 0">
+                  {{ q.change | signed }} ({{ q.changePct | signed: 2 : '%' }})
+                </td>
+              } @else {
+                <td class="num muted">-</td>
+                <td class="num muted">-</td>
+              }
+              <td class="hide-sm"><app-sparkline [points]="row.spark" /></td>
+            </tr>
+          } @empty {
+            <tr><td colspan="6" class="muted">No instruments match "{{ search() }}".</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+}

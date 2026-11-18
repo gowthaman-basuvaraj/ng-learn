@@ -1,0 +1,73 @@
+<section class="page-head">
+  <div>
+    <h1>Lab</h1>
+    <p class="muted">Trigger each mechanism and check it against the server's own counters. Keep DevTools › Network open.</p>
+  </div>
+  <button type="button" class="btn" (click)="resetStats()">Reset counters</button>
+</section>
+
+<div class="grid">
+  <section class="card exp">
+    <h2>1 · Request deduplication</h2>
+    <p class="muted">Fires 5 identical concurrent GETs (1.2 s each). With dedup on, the interceptor shares one in-flight request.</p>
+    <div class="actions">
+      <button type="button" class="btn btn--primary" [disabled]="running()" (click)="dedup(true)">5× GET, dedup on</button>
+      <button type="button" class="btn" [disabled]="running()" (click)="dedup(false)">5× GET, dedup off (HttpContext)</button>
+    </div>
+  </section>
+
+  <section class="card exp">
+    <h2>2 · Retry with backoff</h2>
+    <p class="muted">The endpoint returns 503 N times, then 200. The retry interceptor hides transient failures, so the error toast fires only once, at the very end.</p>
+    <div class="actions">
+      <button type="button" class="btn btn--primary" [disabled]="running()" (click)="retry(2)">Fail 2×, then succeed</button>
+      <button type="button" class="btn" [disabled]="running()" (click)="retry(6)">Fail 6× (exceeds budget)</button>
+    </div>
+  </section>
+
+  <section class="card exp">
+    <h2>3 · Single-flight token refresh</h2>
+    <p class="muted">Invalidates every access token on the server, then fires 4 authenticated requests at once. Expect exactly one refresh.</p>
+    <div class="actions">
+      <button type="button" class="btn btn--primary" [disabled]="running()" (click)="refreshStorm()">Expire tokens + 4 parallel requests</button>
+    </div>
+    <p class="small muted">Token rotates in ~{{ tokenSecondsLeft() }}s · client refreshes so far: {{ auth.refreshCount() }}</p>
+  </section>
+
+  <section class="card exp">
+    <h2>4 · Realtime resilience</h2>
+    <p class="muted">The server kills every WebSocket and SSE connection. Both reconnect with backoff. WS re-subscribes; SSE resumes from Last-Event-ID.</p>
+    <div class="actions">
+      <button type="button" class="btn btn--primary" [disabled]="running()" (click)="dropConnections()">Drop all connections</button>
+      <button type="button" class="btn" (click)="socket.simulateDrop()">Client-side WS drop</button>
+    </div>
+    <p class="small muted">
+      WS: <b>{{ socket.status() }}</b> (reconnects: {{ socket.reconnects() }}) · SSE: <b>{{ events.status() }}</b> · last event id: {{ events.lastEventId() || '-' }}
+    </p>
+    <p class="small muted">Server-side WS subscriptions: {{ socket.serverSymbols().join(', ') || 'none' }}</p>
+  </section>
+</div>
+
+<div class="grid">
+  <section class="card">
+    <h2>Log</h2>
+    <div class="log mono">
+      @for (line of log(); track $index) {
+        <div>{{ line }}</div>
+      } @empty {
+        <div>Run an experiment…</div>
+      }
+    </div>
+  </section>
+  <section class="card">
+    <h2>Server counters <span class="muted small">(polled 1/s, outside dedup and the loading bar)</span></h2>
+    <table class="table compact">
+      @for (h of hits(); track h[0]) {
+        <tr><td class="mono">{{ h[0] }}</td><td class="num mono">{{ h[1] }}</td></tr>
+      }
+    </table>
+    <p class="small muted">
+      Open sockets: WS {{ stats().wsClients }} · SSE {{ stats().sseClients }} · Client in-flight HTTP: {{ loading.count() }} · dedup registry: {{ inflight.size }}
+    </p>
+  </section>
+</div>

@@ -1,0 +1,198 @@
+/* Global design tokens + a few primitives. Component styles are encapsulated (emulated
+   shadow DOM by default), so anything shared lives here as CSS custom properties. */
+:root {
+  color-scheme: dark;
+  --bg: #0b0e14;
+  --surface: #121722;
+  --surface-2: #1a2130;
+  --border: #253046;
+  --text: #e6eaf2;
+  --muted: #8a94a8;
+  --accent: #5b8cff;
+  --up: #2fd17c;
+  --down: #ff5c5c;
+  --warn: #f5b942;
+  --up-bg: rgb(47 209 124 / 0.18);
+  --down-bg: rgb(255 92 92 / 0.18);
+  --radius: 10px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 14px/1.45 system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
+a {
+  color: var(--accent);
+}
+
+h1 {
+  font-size: 22px;
+  margin: 0 0 4px;
+}
+
+.mono {
+  font-family: ui-monospace, 'Cascadia Mono', 'SF Mono', Menlo, monospace;
+  font-variant-numeric: tabular-nums;
+}
+.muted {
+  color: var(--muted);
+}
+.up {
+  color: var(--up);
+}
+.down {
+  color: var(--down);
+}
+.error {
+  color: var(--down);
+  font-size: 12px;
+  margin: 0;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+}
+
+.page-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+
+  p {
+    margin: 0;
+  }
+}
+
+input,
+select {
+  background: var(--surface-2);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 7px 10px;
+  font: inherit;
+
+  &:focus {
+    outline: 2px solid var(--accent);
+    outline-offset: -1px;
+  }
+  &.ng-invalid.ng-touched {
+    border-color: var(--down);
+  }
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  justify-content: center;
+  padding: 7px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    border-color: var(--accent);
+  }
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+.btn--primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.btn--buy {
+  background: var(--up);
+  border-color: var(--up);
+  color: #04140c;
+  font-weight: 600;
+}
+.btn--sell {
+  background: var(--down);
+  border-color: var(--down);
+  color: #1a0505;
+  font-weight: 600;
+}
+.btn--ghost {
+  background: transparent;
+  border-color: transparent;
+  color: var(--muted);
+  &:hover:not(:disabled) {
+    color: var(--text);
+    border-color: var(--border);
+  }
+}
+
+.pill {
+  font-size: 11px;
+  background: var(--surface-2);
+  color: var(--text);
+  border-radius: 999px;
+  padding: 0 6px;
+  min-width: 18px;
+  text-align: center;
+}
+.pill--alert {
+  background: var(--accent);
+  color: #fff;
+}
+
+.table-wrap {
+  padding: 0;
+  overflow-x: auto;
+}
+.table {
+  width: 100%;
+  border-collapse: collapse;
+
+  th {
+    text-align: left;
+    font-weight: 500;
+    color: var(--muted);
+    font-size: 12px;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  tr:last-child td {
+    border-bottom: 0;
+  }
+  .num {
+    text-align: right;
+  }
+  tr.clickable {
+    cursor: pointer;
+  }
+  tr.clickable:hover td {
+    background: var(--surface-2);
+  }
+}
+
+.price-flash {
+  border-radius: 4px;
+}

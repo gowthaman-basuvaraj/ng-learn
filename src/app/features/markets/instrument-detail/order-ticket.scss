@@ -1,0 +1,55 @@
+.ticket {
+  display: grid;
+  gap: 12px;
+  align-content: start;
+}
+
+.field {
+  display: grid;
+  gap: 4px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.seg2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  background: var(--surface-2);
+  padding: 3px;
+  border-radius: 8px;
+
+  label {
+    text-align: center;
+    padding: 6px;
+    border-radius: 6px;
+    cursor: pointer;
+    color: var(--muted);
+  }
+  input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+  label.buy {
+    background: var(--up);
+    color: #04140c;
+    font-weight: 600;
+  }
+  label.sell {
+    background: var(--down);
+    color: #1a0505;
+    font-weight: 600;
+  }
+}
+
+.estimate {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+}
+
+.tiny {
+  font-size: 11px;
+  margin: 0;
+}
